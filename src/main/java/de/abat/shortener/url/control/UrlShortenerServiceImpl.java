@@ -38,8 +38,6 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
                 .map(ShortenedUrl::getUrl);
     }
 
-    //TODO unit and integration tests parallel etc..
-
     @Override
     public ShortenedUrlDto createShortUrl(URL url, String customCode, Duration ttl) {
         if (Objects.nonNull(customCode)) {
@@ -59,6 +57,11 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
     }
 
     boolean isShortUrlValid(ShortenedUrl s) {
-        return s.getValidUntil() == null || ZonedDateTime.now().isBefore(s.getValidUntil());
+        if (s == null) {
+            return false;
+        }
+
+        ZonedDateTime validUntil = s.getValidUntil();
+        return validUntil == null || ZonedDateTime.now().isBefore(validUntil);
     }
 }
