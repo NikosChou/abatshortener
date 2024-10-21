@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-class RedisKeyInitializationTest {
+class RedisKeyInitializationUTest {
 
     private RedisKeyInitialization sut;
     private final String base = "123456789ABCDEFGHJKLMNPQRSTUVWXYZ";

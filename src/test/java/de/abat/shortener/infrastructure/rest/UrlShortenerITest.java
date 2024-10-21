@@ -1,6 +1,6 @@
 package de.abat.shortener.infrastructure.rest;
 
-import de.abat.shortener.TestcontainersConfiguration;
+import de.abat.shortener.testcontainers.UrlShortenerITestConfiguration;
 import de.abat.shortener.url.boundary.ShortRequest;
 import de.abat.shortener.url.boundary.ShortenedUrlDto;
 import de.abat.shortener.url.entity.ShortenedUrl;
@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UrlShortenerITest extends TestcontainersConfiguration {
+class UrlShortenerITest extends UrlShortenerITestConfiguration {
 
     @LocalServerPort
     private int port;

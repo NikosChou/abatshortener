@@ -1,4 +1,4 @@
-package de.abat.shortener;
+package de.abat.shortener.testcontainers;
 
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -9,7 +9,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
-public class TestcontainersConfiguration {
+public class UrlShortenerServiceImplITestConfiguration {
 
     @Container
     static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>(

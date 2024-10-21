@@ -1,5 +1,6 @@
 package de.abat.shortener;
 
+import de.abat.shortener.testcontainers.UrlShortenerServiceImplITestConfiguration;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles("test")
-class UrlShortenerApplicationTests extends TestcontainersConfiguration {
+class UrlShortenerApplicationTests extends UrlShortenerServiceImplITestConfiguration {
 
     @Autowired
     private StringRedisTemplate redisTemplate;
