@@ -30,7 +30,7 @@ module.exports = configure(function (/* ctx */) {
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
     boot: [
-      
+
       'axios',
     ],
 
@@ -60,7 +60,7 @@ module.exports = configure(function (/* ctx */) {
         node: 'node16'
       },
 
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,
@@ -79,7 +79,7 @@ module.exports = configure(function (/* ctx */) {
       // extendViteConf (viteConf) {},
       // viteVuePluginOptions: {},
 
-      
+
       // vitePlugins: [
       //   [ 'package-name', { ..options.. } ]
       // ]
@@ -87,8 +87,18 @@ module.exports = configure(function (/* ctx */) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#devServer
     devServer: {
-      // https: true
-      open: true // opens browser window automatically
+      https: false,
+      proxy: {
+        // proxy all requests starting with /api to jsonplaceholder
+        '/api/v1': {
+          target: 'http://0.0.0.0:8080',
+          changeOrigin: true,
+          pathRewrite: {
+            '^/api/v1': ''
+          }
+        }
+      },
+      open: false
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
@@ -106,7 +116,7 @@ module.exports = configure(function (/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: []
+      plugins: ['Notify']
     },
 
     // animations: 'all', // --- includes all animations

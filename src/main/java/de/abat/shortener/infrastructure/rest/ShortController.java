@@ -11,7 +11,7 @@ import java.net.URI;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/v1/short")
+@RequestMapping({"/api/v1/short", ""})
 public class ShortController {
 
     private final UrlShortenerService urlShortenerService;
@@ -20,7 +20,7 @@ public class ShortController {
         this.urlShortenerService = urlShortenerService;
     }
 
-    @GetMapping("/{shortCode}")
+    @GetMapping("/{shortCode:[a-zA-Z0-9]{5,}}")
     public ResponseEntity<?> get(@PathVariable String shortCode) {
         Optional<String> maybeUrl = urlShortenerService.getUrl(shortCode);
         return maybeUrl.map(s -> ResponseEntity.status(HttpStatus.FOUND)
