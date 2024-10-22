@@ -1,7 +1,7 @@
 package de.abat.shortener.infrastructure.rest;
 
-import de.abat.shortener.infrastructure.exceptions.ShortExistsException;
-import de.abat.shortener.infrastructure.exceptions.ShortGeneratorException;
+import de.abat.shortener.infrastructure.exceptions.KeyNotExistsException;
+import de.abat.shortener.infrastructure.exceptions.KeyNotFoundInPoolException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,13 +17,13 @@ public class ApplicationExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({ShortExistsException.class, ShortGeneratorException.class})
-    public ExceptionMessage handleShortException(Exception e) {
+    @ExceptionHandler({KeyNotExistsException.class, KeyNotFoundInPoolException.class})
+    public ExceptionMessage handleKeyException(Exception e) {
         log.error("Exception Handler", e);
         String message = "internal server error";
-        if (e instanceof ShortGeneratorException sge) {
+        if (e instanceof KeyNotFoundInPoolException sge) {
             message = sge.getMessage();
-        } else if (e instanceof ShortExistsException see) {
+        } else if (e instanceof KeyNotExistsException see) {
             message = see.getMessage();
         }
         return new ExceptionMessage(message);

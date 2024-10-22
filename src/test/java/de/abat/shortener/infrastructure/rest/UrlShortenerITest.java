@@ -151,7 +151,7 @@ class UrlShortenerITest extends UrlShortenerITestConfiguration {
         //second time the code shouldn't be available
         ResponseEntity<ApplicationExceptionHandler.ExceptionMessage> shortResponse = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/short", request, ApplicationExceptionHandler.ExceptionMessage.class);
         assertThat(shortResponse.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(shortResponse.getBody().message()).isEqualTo("Short customCode gp isn't available");
+        assertThat(shortResponse.getBody().message()).isEqualTo("key gp isn't available");
     }
 
     @Test
@@ -165,7 +165,7 @@ class UrlShortenerITest extends UrlShortenerITestConfiguration {
         //second time the code shouldn't be available
         ResponseEntity<ApplicationExceptionHandler.ExceptionMessage> shortResponse = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/short", request, ApplicationExceptionHandler.ExceptionMessage.class);
         assertThat(shortResponse.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(shortResponse.getBody().message()).isEqualTo("Short customCode gpt isn't available");
+        assertThat(shortResponse.getBody().message()).isEqualTo("key gpt isn't available");
     }
 
     @Test
@@ -179,7 +179,7 @@ class UrlShortenerITest extends UrlShortenerITestConfiguration {
 
         ResponseEntity<ApplicationExceptionHandler.ExceptionMessage> shortResponse = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/short", request, ApplicationExceptionHandler.ExceptionMessage.class);
         assertThat(shortResponse.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(shortResponse.getBody().message()).isEqualTo("Short code FS doesn't exist in pool");
+        assertThat(shortResponse.getBody().message()).isEqualTo("Key FS doesn't exist in pool");
     }
 
     @Test

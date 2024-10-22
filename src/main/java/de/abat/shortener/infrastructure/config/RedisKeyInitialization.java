@@ -1,5 +1,6 @@
-package de.abat.shortener.infrastructure.generator;
+package de.abat.shortener.infrastructure.config;
 
+import de.abat.shortener.infrastructure.pool.Range;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -11,8 +12,9 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Service
-@ConditionalOnProperty(value = "de.abat.url.shortener.redis.enabled", havingValue = "true")
+@ConditionalOnProperty(value = "de.abat.key.pool.redis.enabled", havingValue = "true")
 public class RedisKeyInitialization {
+    private static final String REDIS_POOL_INITIALIZED = "redis-pool";
     private final String keySet;
     private final String base;
     private final int baseLength;
@@ -21,10 +23,10 @@ public class RedisKeyInitialization {
     private final StringRedisTemplate template;
 
     public RedisKeyInitialization(
-            @Value("${de.abat.url.shortener.redis.key.set.name}") String keySet,
-            @Value("${de.abat.url.shortener.redis.key.base}") String base,
-            @Value("${de.abat.url.shortener.redis.key.length}") int length,
-            @Value("${de.abat.url.shortener.redis.key.generator.step}") int step, StringRedisTemplate template) {
+            @Value("${de.abat.key.pool.redis.name}") String keySet,
+            @Value("${de.abat.key.pool.base}") String base,
+            @Value("${de.abat.key.pool.key.length}") int length,
+            @Value("${de.abat.key.pool.generator.step}") int step, StringRedisTemplate template) {
         this.base = base;
         this.length = length;
         this.step = step;
@@ -34,11 +36,14 @@ public class RedisKeyInitialization {
     }
 
     public void initializeRedis() {
-        Long size = template.opsForSet().size(keySet);
-        if (size != null && size == 0) {
+        Boolean isCurrentKeySetInitialized = template.opsForSet().isMember(REDIS_POOL_INITIALIZED, keySet);
+        if (Boolean.FALSE.equals(isCurrentKeySetInitialized)) {
             log.trace("Redis Initializer started");
             long totalCombinations = generateAllBaseCombinations();
-            log.trace("Total combinations: " + totalCombinations);
+            log.trace("Total keys created: " + totalCombinations);
+            template.opsForSet().add(REDIS_POOL_INITIALIZED, keySet);
+        } else {
+            log.trace("Available keys {}", template.opsForSet().size(keySet));
         }
     }
 

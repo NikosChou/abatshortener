@@ -32,7 +32,7 @@ If you prefer not to use Redis as the unique code pool, you can disable it using
 
 1. **application.properties file**
    ```properties
-   de.abat.url.shortener.redis.enabled=false
+   de.abat.key.pool.redis.enabled=false
    ```
 
 2. **Environment Variable**

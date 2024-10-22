@@ -1,6 +1,6 @@
 package de.abat.shortener.url.control;
 
-import de.abat.shortener.infrastructure.generator.ShortUrlGenerator;
+import de.abat.shortener.infrastructure.pool.KeyPool;
 import de.abat.shortener.url.boundary.ShortenedUrlDto;
 import de.abat.shortener.url.entity.ShortenedUrl;
 import de.abat.shortener.url.entity.ShortenedUrlRepository;
@@ -16,25 +16,27 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class UrlShortenerServiceImplUTest {
 
     private UrlShortenerServiceImpl sut;
-    private ShortUrlGenerator shortUrlGenerator;
+    private KeyPool shortUrlGenerator;
     private ShortenedUrlRepository shortenedUrlRepository;
 
     @BeforeEach
     void setup() {
         this.shortenedUrlRepository = mock(ShortenedUrlRepository.class);
-        this.shortUrlGenerator = mock(ShortUrlGenerator.class);
+        this.shortUrlGenerator = mock(KeyPool.class);
         this.sut = new UrlShortenerServiceImpl(shortUrlGenerator, shortenedUrlRepository);
     }
 
@@ -65,11 +67,7 @@ class UrlShortenerServiceImplUTest {
             return entity;
         });
 
-        if (customCode != null) {
-            when(shortUrlGenerator.removeFromPool(eq(customCode))).thenReturn(customCode);
-        } else {
-            when(shortUrlGenerator.generate()).thenReturn("random");
-        }
+        when(this.shortUrlGenerator.pop(any())).thenAnswer(args -> Objects.requireNonNullElse(customCode, "random"));
 
         ShortenedUrlDto actual = this.sut.createShortUrl(url, customCode, ttl);
 

@@ -1,6 +1,6 @@
 package de.abat.shortener.generator;
 
-import de.abat.shortener.infrastructure.generator.RedisKeyInitialization;
+import de.abat.shortener.infrastructure.config.RedisKeyInitialization;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.core.SetOperations;
@@ -21,12 +21,11 @@ class RedisKeyInitializationUTest {
     private final String keySet = "set-name";
     private final int length = 2;
     private final int step = 100;
-    private StringRedisTemplate template;
     private SetOperations<String, String> operations;
 
     @BeforeEach
     void setup() {
-        template = mock(StringRedisTemplate.class);
+        StringRedisTemplate template = mock(StringRedisTemplate.class);
         operations = mock(SetOperations.class);
         when(template.opsForSet()).thenReturn(operations);
         this.sut = new RedisKeyInitialization(keySet, base, length, step, template);
@@ -43,7 +42,7 @@ class RedisKeyInitializationUTest {
 
     @Test
     void shouldNotInitializeSameSetIfAlreadyExists() {
-        when(operations.size(eq(keySet))).thenReturn(10L);
+        when(operations.isMember(anyString(), eq(keySet))).thenReturn(true);
         this.sut.initializeRedis();
         verify(operations, never()).add(anyString(), any());
     }

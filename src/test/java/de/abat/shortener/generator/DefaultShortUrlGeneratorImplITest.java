@@ -1,6 +1,6 @@
 package de.abat.shortener.generator;
 
-import de.abat.shortener.infrastructure.generator.DefaultShortUrlGeneratorImpl;
+import de.abat.shortener.infrastructure.pool.DummyKeyPoolImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class DefaultShortUrlGeneratorImplITest {
 
     @Autowired
-    private DefaultShortUrlGeneratorImpl defaultShortUrlGenerator;
+    private DummyKeyPoolImpl defaultShortUrlGenerator;
 
     @Test
     void testBeanDefaultShortUrlGeneratorImplIsInitialized() {

@@ -1,7 +1,7 @@
 package de.abat.shortener.url.control;
 
-import de.abat.shortener.infrastructure.exceptions.ShortExistsException;
-import de.abat.shortener.infrastructure.generator.ShortUrlGenerator;
+import de.abat.shortener.infrastructure.exceptions.KeyNotExistsException;
+import de.abat.shortener.infrastructure.pool.KeyPool;
 import de.abat.shortener.url.boundary.ShortenedUrlDto;
 import de.abat.shortener.url.boundary.UrlShortenerService;
 import de.abat.shortener.url.entity.ShortenedUrl;
@@ -21,11 +21,11 @@ import java.util.Optional;
 @Transactional
 public class UrlShortenerServiceImpl implements UrlShortenerService {
 
-    final private ShortUrlGenerator shortGenerator;
+    final private KeyPool keyPool;
     final private ShortenedUrlRepository shortenedUrlRepository;
 
-    public UrlShortenerServiceImpl(ShortUrlGenerator shortGenerator, ShortenedUrlRepository shortenedUrlRepository) {
-        this.shortGenerator = shortGenerator;
+    public UrlShortenerServiceImpl(KeyPool keyPool, ShortenedUrlRepository shortenedUrlRepository) {
+        this.keyPool = keyPool;
         this.shortenedUrlRepository = shortenedUrlRepository;
     }
 
@@ -42,13 +42,11 @@ public class UrlShortenerServiceImpl implements UrlShortenerService {
     public ShortenedUrlDto createShortUrl(URL url, String customCode, Duration ttl) {
         if (Objects.nonNull(customCode)) {
             shortenedUrlRepository.findByShortCodeIgnoreCase(customCode).ifPresent(existing -> {
-                throw new ShortExistsException(String.format("Short customCode %s isn't available", existing.getShortCode()));
+                throw new KeyNotExistsException(String.format("key %s isn't available", existing.getShortCode()));
             });
         }
 
-        String shortCode = Optional.ofNullable(customCode)
-                .map(shortGenerator::removeFromPool)
-                .orElseGet(shortGenerator::generate);
+        String shortCode = keyPool.pop(customCode);
         ZonedDateTime validUntil = Optional.ofNullable(ttl)
                 .map(t -> ZonedDateTime.now().plus(t))
                 .orElse(null);
