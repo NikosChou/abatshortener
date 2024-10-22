@@ -6,6 +6,7 @@ target/
 
 server.log
 server.log*
+**/src/main/resources/spa/**
 
 ### STS ###
 .apt_generated
