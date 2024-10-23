@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/limit-rps: "15"
+  name: abat-short-ing
+spec:
+  tls:
+    - hosts:
+        - url.choustoulakis.de
+      secretName: abat-short-tls
+  rules:
+    - host: url.choustoulakis.de
+      http: &http
+        paths:
+          - backend:
+              service:
+                name: abat-short-svc
+                port:
+                  number: 8080
+            path: /(.*)
+            pathType: Prefix
+

@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: abat-short-app
+  labels:
+    app: abat-short-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: abat-short-app
+  template:
+    metadata:
+      labels:
+        app: abat-short-app
+    spec:
+      containers:
+        - name: abat-short-app
+          image: openjdk:21-jdk-slim
+          command: ["/bin/sh", "-c"]
+          env:
+            - name: SPRING_DOCKER_COMPOSE_ENABLED
+              value: "false"
+            - name: DE_ABAT_KEY_POOL_REDIS_ENABLED
+              value: "false"
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:h2:mem:testdb"
+          args:
+            - |
+              apt-get update && \
+              apt-get install -y git maven npm && \
+              git clone https://github.com/NikosChou/abatshortener.git && \
+              cd abatshortener && \
+              git checkout frontend && \
+              mkdir src/main/resources/spa && \
+              cd src/main/js && \
+              npm ci && npm run springboot && \
+              cd ../../.. && \
+              mvn spring-boot:run
+      restartPolicy: Always
