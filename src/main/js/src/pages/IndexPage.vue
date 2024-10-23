@@ -95,10 +95,10 @@ const ttl = computed(() => {
 })
 const errorMessage = ref();
 const durationOptions = [
-  {label: 'Sec', value: 'S', toDuration: (v: number) => `${v}${v}S`},
-  {label: 'Min', value: 'M', toDuration: (v: number) => `${v}${v}M`},
-  {label: 'Hour', value: 'H', toDuration: (v: number) => `${v}${v}H`},
-  {label: 'Days', value: 'D', toDuration: (v: number) => `${v}${24 * v}H`}
+  {label: 'Sec', value: 'S', toDuration: (v: number) => `${v}S`},
+  {label: 'Min', value: 'M', toDuration: (v: number) => `${v}M`},
+  {label: 'Hour', value: 'H', toDuration: (v: number) => `${v}H`},
+  {label: 'Days', value: 'D', toDuration: (v: number) => `${24 * v}H`}
 ]
 
 function shortUrl() {
