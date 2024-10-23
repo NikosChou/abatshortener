@@ -3,6 +3,7 @@ package de.abat.shortener.infrastructure.rest;
 import de.abat.shortener.url.boundary.ShortRequest;
 import de.abat.shortener.url.boundary.ShortenedUrlDto;
 import de.abat.shortener.url.boundary.UrlShortenerService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,7 +31,7 @@ public class ShortController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ShortenedUrlDto shortUrl(@RequestBody ShortRequest request) {
+    public ShortenedUrlDto shortUrl(@Valid @RequestBody ShortRequest request) {
         return urlShortenerService.createShortUrl(request.url(), request.code(), request.ttl());
     }
 }
