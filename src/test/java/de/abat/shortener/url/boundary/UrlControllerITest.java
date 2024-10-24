@@ -184,8 +184,7 @@ class UrlControllerITest extends UrlShortenerITestConfiguration {
     @Test
     @SneakyThrows
     void whenAnInternalErrorOccursShouldAdaptMessage() {
-        String google = "https://google.com";
-        ShortRequest request = new ShortRequest(null, "ABCDE", Duration.ofSeconds(1));
+        ShortRequest request = new ShortRequest(null, "124AW", Duration.ofSeconds(1));
 
         ResponseEntity<ApplicationExceptionHandler.ExceptionMessage> shortResponse = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/short", request, ApplicationExceptionHandler.ExceptionMessage.class);
 
