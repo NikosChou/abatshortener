@@ -25,6 +25,8 @@ spec:
               value: "false"
             - name: SPRING_DATASOURCE_URL
               value: "jdbc:h2:mem:testdb"
+            - name: TZ
+              value: "Europe/Athens"
           args:
             - |
               apt-get update && \
