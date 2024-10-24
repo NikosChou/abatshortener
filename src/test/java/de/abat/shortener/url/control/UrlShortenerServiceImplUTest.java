@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.context.ApplicationEventPublisher;
 
 import java.net.URI;
 import java.net.URL;
@@ -18,6 +19,7 @@ import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +29,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class UrlShortenerServiceImplUTest {
+public class UrlShortenerServiceImplUTest {
 
     private UrlShortenerServiceImpl sut;
     private KeyPool shortUrlGenerator;
@@ -37,7 +39,7 @@ class UrlShortenerServiceImplUTest {
     void setup() {
         this.shortenedUrlRepository = mock(ShortenedUrlRepository.class);
         this.shortUrlGenerator = mock(KeyPool.class);
-        this.sut = new UrlShortenerServiceImpl(shortUrlGenerator, shortenedUrlRepository, eventPublisher);
+        this.sut = new UrlShortenerServiceImpl(shortUrlGenerator, shortenedUrlRepository, mock(ApplicationEventPublisher.class));
     }
 
     @Test
@@ -85,9 +87,9 @@ class UrlShortenerServiceImplUTest {
     @SneakyThrows
     private static Stream<Arguments> shouldCreateShortUrls() {
         return Stream.of(
-                Arguments.of(new URI("https://google.com").toURL(), "abc", Duration.ofDays(1), new ShortenedUrlDto("https://google.com", "abc", ZonedDateTime.now().plusDays(1), ZonedDateTime.now())),
-                Arguments.of(new URI("https://google.com").toURL(), null, Duration.ofDays(1), new ShortenedUrlDto("https://google.com", "random", ZonedDateTime.now().plusDays(1), ZonedDateTime.now())),
-                Arguments.of(new URI("https://google.com").toURL(), null, null, new ShortenedUrlDto("https://google.com", "random", null, ZonedDateTime.now()))
+                Arguments.of(new URI("https://google.com").toURL(), "abc", Duration.ofDays(1), new ShortenedUrlDto(UUID.randomUUID(), "https://google.com", "abc", ZonedDateTime.now().plusDays(1), ZonedDateTime.now())),
+                Arguments.of(new URI("https://google.com").toURL(), null, Duration.ofDays(1), new ShortenedUrlDto(UUID.randomUUID(), "https://google.com", "random", ZonedDateTime.now().plusDays(1), ZonedDateTime.now())),
+                Arguments.of(new URI("https://google.com").toURL(), null, null, new ShortenedUrlDto(UUID.randomUUID(), "https://google.com", "random", null, ZonedDateTime.now()))
         );
     }
 
