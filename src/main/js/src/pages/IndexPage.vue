@@ -67,13 +67,23 @@
         </q-btn>
       </q-card-section>
     </q-card>
+
+    <q-card class="col-11">
+      <q-table
+        @row-click="copyUrlFromTable"
+        title="Code statistics"
+        :rows="rows"
+        :columns="columns"
+        row-key="code"
+      />
+    </q-card>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import {api} from "../boot/axios";
-import {QInput, useQuasar} from "quasar";
+import {LocalStorage, QInput, useQuasar} from "quasar";
 
 const urlRegex = /^((?:https?|ftp):\/\/)(?:www\.)?[a-z0-9-]+(?:\.[a-z0-9-]+)+[^\s]*$/i;
 const url = ref('https://example.com')
@@ -101,6 +111,30 @@ const durationOptions = [
   {label: 'Days', value: 'D', toDuration: (v: number) => `${24 * v}H`}
 ]
 
+const columns = [
+  {name: 'code', align: 'center', label: 'Code', field: 'code', sortable: true},
+  {name: 'counter', label: 'Counter', field: 'counter', sortable: true}
+]
+const rows = ref<Array<{ code: string, counter: number }>>([])
+
+onMounted(() => {
+  fetchStatistics()
+})
+
+function fetchStatistics() {
+  rows.value = []
+  const codes: Record<string, string> | null = LocalStorage.getItem("codes");
+  if (codes) {
+    Object.keys(codes).forEach(async (key: string) => {
+      const counter = await api.get("/api/v1/statistics/" + key).then(({data}) => data.counter)
+      rows.value?.push({
+        code: codes[key],
+        counter
+      })
+    })
+  }
+}
+
 function shortUrl() {
   if (isUrlValid.value) {
     api.post('/api/v1/short', {url: url.value, code: customCode.value, ttl: ttl.value})
@@ -112,6 +146,10 @@ function shortUrl() {
         ttlVar.value = undefined
         ttlQuantity.value = undefined
         moreOptions.value = false
+        const codes: Record<string, string> = LocalStorage.getItem("codes") || {}
+        codes[data.id] = data.code;
+        LocalStorage.set("codes", codes);
+        fetchStatistics()
       }).catch((err) => {
       errorMessage.value = err.response.data.message
       customCodeRef.value?.validate()
@@ -121,6 +159,11 @@ function shortUrl() {
 
 function copyUrl() {
   navigator.clipboard.writeText(url.value)
+  $q.notify({message: 'url copied', color: "primary"})
+}
+
+function copyUrlFromTable(e: PointerEvent, b: {code: string}) {
+  navigator.clipboard.writeText(`${location.protocol}//${location.host}/${b.code}`)
   $q.notify({message: 'url copied', color: "primary"})
 }
 

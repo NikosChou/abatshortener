@@ -37,7 +37,7 @@ class UrlShortenerServiceImplUTest {
     void setup() {
         this.shortenedUrlRepository = mock(ShortenedUrlRepository.class);
         this.shortUrlGenerator = mock(KeyPool.class);
-        this.sut = new UrlShortenerServiceImpl(shortUrlGenerator, shortenedUrlRepository);
+        this.sut = new UrlShortenerServiceImpl(shortUrlGenerator, shortenedUrlRepository, eventPublisher);
     }
 
     @Test
