@@ -1,12 +1,11 @@
-package de.abat.shortener.generator;
+package de.abat.shortener.url.pool;
 
-import de.abat.shortener.infrastructure.pool.DummyKeyPoolImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class DefaultShortUrlGeneratorImplUTest {
+class DummyKeyPoolImplUTest {
 
     private DummyKeyPoolImpl sut;
 

@@ -1,7 +1,7 @@
 package de.abat.shortener.url.control;
 
-import de.abat.shortener.infrastructure.exceptions.KeyNotExistsException;
-import de.abat.shortener.infrastructure.pool.KeyPool;
+import de.abat.shortener.url.exceptions.KeyNotExistsException;
+import de.abat.shortener.url.pool.KeyPool;
 import de.abat.shortener.url.boundary.ShortenedUrlDto;
 import de.abat.shortener.url.boundary.UrlShortenerService;
 import de.abat.shortener.url.entity.ShortenedUrl;
@@ -19,7 +19,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @Transactional
-public class UrlShortenerServiceImpl implements UrlShortenerService {
+class UrlShortenerServiceImpl implements UrlShortenerService {
 
     final private KeyPool keyPool;
     final private ShortenedUrlRepository shortenedUrlRepository;

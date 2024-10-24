@@ -1,6 +1,6 @@
-package de.abat.shortener.infrastructure.pool;
+package de.abat.shortener.url.pool;
 
-import de.abat.shortener.infrastructure.exceptions.KeyNotFoundInPoolException;
+import de.abat.shortener.url.exceptions.KeyNotFoundInPoolException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

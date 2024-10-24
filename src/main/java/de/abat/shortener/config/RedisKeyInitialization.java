@@ -1,6 +1,5 @@
-package de.abat.shortener.infrastructure.config;
+package de.abat.shortener.config;
 
-import de.abat.shortener.infrastructure.pool.Range;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;

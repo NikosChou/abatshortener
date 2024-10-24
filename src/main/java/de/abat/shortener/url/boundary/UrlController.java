@@ -1,8 +1,5 @@
-package de.abat.shortener.infrastructure.rest;
+package de.abat.shortener.url.boundary;
 
-import de.abat.shortener.url.boundary.ShortRequest;
-import de.abat.shortener.url.boundary.ShortenedUrlDto;
-import de.abat.shortener.url.boundary.UrlShortenerService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +10,11 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping({"/api/v1/short", ""})
-public class ShortController {
+public class UrlController {
 
     private final UrlShortenerService urlShortenerService;
 
-    public ShortController(UrlShortenerService urlShortenerService) {
+    public UrlController(UrlShortenerService urlShortenerService) {
         this.urlShortenerService = urlShortenerService;
     }
 

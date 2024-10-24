@@ -1,6 +1,5 @@
-package de.abat.shortener.generator;
+package de.abat.shortener.config;
 
-import de.abat.shortener.infrastructure.config.RedisKeyInitialization;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.core.SetOperations;

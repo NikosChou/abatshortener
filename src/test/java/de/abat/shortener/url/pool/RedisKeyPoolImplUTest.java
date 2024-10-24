@@ -1,7 +1,6 @@
-package de.abat.shortener.generator;
+package de.abat.shortener.url.pool;
 
-import de.abat.shortener.infrastructure.exceptions.KeyNotFoundInPoolException;
-import de.abat.shortener.infrastructure.pool.RedisKeyPoolImpl;
+import de.abat.shortener.url.exceptions.KeyNotFoundInPoolException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.redis.core.SetOperations;
@@ -15,7 +14,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-class RedisShortUrlGeneratorImplUTest {
+class RedisKeyPoolImplUTest {
 
     private RedisKeyPoolImpl sut;
     private SetOperations<String, String> mockOps;

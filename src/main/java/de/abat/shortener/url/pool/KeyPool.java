@@ -1,6 +1,6 @@
-package de.abat.shortener.infrastructure.pool;
+package de.abat.shortener.url.pool;
 
-import de.abat.shortener.infrastructure.exceptions.KeyNotFoundInPoolException;
+import de.abat.shortener.url.exceptions.KeyNotFoundInPoolException;
 
 public interface KeyPool {
 

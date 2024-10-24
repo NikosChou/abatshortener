@@ -1,4 +1,4 @@
-package de.abat.shortener.infrastructure.pool;
+package de.abat.shortener.url.pool;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;

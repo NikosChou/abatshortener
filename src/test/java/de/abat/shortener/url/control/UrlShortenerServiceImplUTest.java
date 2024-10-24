@@ -1,9 +1,9 @@
 package de.abat.shortener.url.control;
 
-import de.abat.shortener.infrastructure.pool.KeyPool;
 import de.abat.shortener.url.boundary.ShortenedUrlDto;
 import de.abat.shortener.url.entity.ShortenedUrl;
 import de.abat.shortener.url.entity.ShortenedUrlRepository;
+import de.abat.shortener.url.pool.KeyPool;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

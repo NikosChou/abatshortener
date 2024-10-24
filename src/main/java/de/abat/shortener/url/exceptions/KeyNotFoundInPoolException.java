@@ -1,4 +1,4 @@
-package de.abat.shortener.infrastructure.exceptions;
+package de.abat.shortener.url.exceptions;
 
 public class KeyNotFoundInPoolException extends RuntimeException {
 

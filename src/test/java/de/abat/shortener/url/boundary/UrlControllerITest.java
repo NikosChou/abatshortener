@@ -1,10 +1,9 @@
-package de.abat.shortener.infrastructure.rest;
+package de.abat.shortener.url.boundary;
 
 import de.abat.shortener.testcontainers.UrlShortenerITestConfiguration;
-import de.abat.shortener.url.boundary.ShortRequest;
-import de.abat.shortener.url.boundary.ShortenedUrlDto;
 import de.abat.shortener.url.entity.ShortenedUrl;
 import de.abat.shortener.url.entity.ShortenedUrlRepository;
+import de.abat.shortener.url.exceptions.ApplicationExceptionHandler;
 import jakarta.transaction.Transactional;
 import lombok.SneakyThrows;
 import org.awaitility.Awaitility;
@@ -28,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UrlShortenerITest extends UrlShortenerITestConfiguration {
+class UrlControllerITest extends UrlShortenerITestConfiguration {
 
     @LocalServerPort
     private int port;
@@ -46,12 +45,12 @@ class UrlShortenerITest extends UrlShortenerITestConfiguration {
     @SneakyThrows
     void shouldShortUrl() {
         String google = "https://google.com";
-        ShortRequest request = new ShortRequest(new URI(google).toURL());
+        ShortRequest request = new ShortRequest(new URI(google).toURL(), "ABCDE");
 
         ShortenedUrlDto shortResponse = restTemplate.postForObject("http://localhost:" + port + "/api/v1/short", request, ShortenedUrlDto.class);
-        assertThat(shortResponse.code()).hasSize(2);
+        assertThat(shortResponse.code()).hasSize(5);
 
-        ResponseEntity<Object> redirectResponse = restTemplate.getForEntity("http://localhost:" + port + "/api/v1/short/"+ shortResponse.code(), Object.class);
+        ResponseEntity<Object> redirectResponse = restTemplate.getForEntity("http://localhost:" + port + "/api/v1/short/" + shortResponse.code(), Object.class);
         assertThat(redirectResponse)
                 .extracting(ResponseEntity::getStatusCode)
                 .isEqualTo(HttpStatus.FOUND);
@@ -69,13 +68,13 @@ class UrlShortenerITest extends UrlShortenerITestConfiguration {
     @SneakyThrows
     void shouldShortCustomUrl() {
         String yahoo = "https://yahoo.com";
-        String custom5LengthCode = "abcde";
+        String custom5LengthCode = "abcd1";
         ShortRequest request = new ShortRequest(new URI(yahoo).toURL(), custom5LengthCode);
 
         ShortenedUrlDto shortResponse = restTemplate.postForObject("http://localhost:" + port + "/api/v1/short", request, ShortenedUrlDto.class);
         assertThat(shortResponse.code()).hasSize(5);
 
-        ResponseEntity<Object> redirectResponse = restTemplate.getForEntity("http://localhost:" + port + "/api/v1/short/"+ custom5LengthCode, Object.class);
+        ResponseEntity<Object> redirectResponse = restTemplate.getForEntity("http://localhost:" + port + "/api/v1/short/" + custom5LengthCode, Object.class);
         assertThat(redirectResponse)
                 .extracting(ResponseEntity::getStatusCode)
                 .isEqualTo(HttpStatus.FOUND);
@@ -98,7 +97,7 @@ class UrlShortenerITest extends UrlShortenerITestConfiguration {
 
         ShortenedUrlDto shortResponse = restTemplate.postForObject("http://localhost:" + port + "/api/v1/short", request, ShortenedUrlDto.class);
 
-        ResponseEntity<Object> redirectResponse = restTemplate.getForEntity("http://localhost:" + port + "/api/v1/short/"+ shortResponse.code(), Object.class);
+        ResponseEntity<Object> redirectResponse = restTemplate.getForEntity("http://localhost:" + port + "/api/v1/short/" + shortResponse.code(), Object.class);
         assertThat(redirectResponse)
                 .extracting(ResponseEntity::getStatusCode)
                 .isEqualTo(HttpStatus.FOUND);
@@ -133,7 +132,7 @@ class UrlShortenerITest extends UrlShortenerITestConfiguration {
                 .pollDelay(ttl)
                 .with()
                 .untilAsserted(() -> {
-                    ResponseEntity<Object> redirectResponse = restTemplate.getForEntity("http://localhost:" + port + "/api/v1/short/"+ shortResponse.code(), Object.class);
+                    ResponseEntity<Object> redirectResponse = restTemplate.getForEntity("http://localhost:" + port + "/api/v1/short/" + shortResponse.code(), Object.class);
                     assertThat(redirectResponse.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
                 });
     }
@@ -143,49 +142,52 @@ class UrlShortenerITest extends UrlShortenerITestConfiguration {
     void whenCustomShortUrlDoesntExistShouldReturnClientError() {
         String searchGpt = "https://chatgpt.com/search";
         // GP code should always be available in Poll
-        stringRedisTemplate.opsForSet().add("2-length", "GP");
-        ShortRequest request = new ShortRequest(new URI(searchGpt).toURL(), "gp");
+        stringRedisTemplate.opsForSet().add("2-length", "GPT35");
+        ShortRequest request = new ShortRequest(new URI(searchGpt).toURL(), "gpt35");
 
         var fireAndForget = restTemplate.postForObject("http://localhost:" + port + "/api/v1/short", request, ShortenedUrlDto.class);
 
         //second time the code shouldn't be available
         ResponseEntity<ApplicationExceptionHandler.ExceptionMessage> shortResponse = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/short", request, ApplicationExceptionHandler.ExceptionMessage.class);
         assertThat(shortResponse.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(shortResponse.getBody().message()).isEqualTo("key gp isn't available");
+        assertThat(shortResponse.getBody().message()).isEqualToIgnoringCase("key gpt35 isn't available");
     }
 
     @Test
     @SneakyThrows
     void whenCustomShortUrlIsTakenShouldReturnClientError() {
         String searchGpt = "https://chatgpt.com/search";
-        ShortRequest request = new ShortRequest(new URI(searchGpt).toURL(), "gpt");
+        ShortRequest request = new ShortRequest(new URI(searchGpt).toURL(), "gpt41");
 
         var fireAndForget = restTemplate.postForObject("http://localhost:" + port + "/api/v1/short", request, ShortenedUrlDto.class);
 
         //second time the code shouldn't be available
         ResponseEntity<ApplicationExceptionHandler.ExceptionMessage> shortResponse = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/short", request, ApplicationExceptionHandler.ExceptionMessage.class);
         assertThat(shortResponse.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(shortResponse.getBody().message()).isEqualTo("key gpt isn't available");
+        assertThat(shortResponse.getBody().message()).isEqualTo("key gpt41 isn't available");
     }
 
     @Test
     @SneakyThrows
     void whenCustomShortCodeIsNotInPoolShouldReturnClientError() {
         String searchGpt = "https://example.com";
-        ShortRequest request = new ShortRequest(new URI(searchGpt).toURL(), "FS");
+        ShortRequest request = new ShortRequest(new URI(searchGpt).toURL(), "XCVAS");
 
         //remove code from Pool
-        stringRedisTemplate.opsForSet().remove("2-length", "FS");
+        stringRedisTemplate.opsForSet().remove("5-length", "XCVAS");
 
         ResponseEntity<ApplicationExceptionHandler.ExceptionMessage> shortResponse = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/short", request, ApplicationExceptionHandler.ExceptionMessage.class);
         assertThat(shortResponse.getStatusCode().is4xxClientError()).isTrue();
-        assertThat(shortResponse.getBody().message()).isEqualTo("Key FS doesn't exist in pool");
+        assertThat(shortResponse.getBody().message()).isEqualTo("Key XCVAS doesn't exist in pool");
     }
 
     @Test
     @SneakyThrows
     void whenAnInternalErrorOccursShouldAdaptMessage() {
-        ResponseEntity<ApplicationExceptionHandler.ExceptionMessage> shortResponse = restTemplate.getForEntity("http://localhost:" + port + "/", ApplicationExceptionHandler.ExceptionMessage.class);
+        String google = "https://google.com";
+        ShortRequest request = new ShortRequest(null, "ABCDE", Duration.ofSeconds(1));
+
+        ResponseEntity<ApplicationExceptionHandler.ExceptionMessage> shortResponse = restTemplate.postForEntity("http://localhost:" + port + "/api/v1/short", request, ApplicationExceptionHandler.ExceptionMessage.class);
 
         assertThat(shortResponse.getStatusCode().is5xxServerError()).isTrue();
         assertThat(shortResponse.getBody().message()).isEqualTo("internal server error");

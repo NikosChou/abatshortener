@@ -1,7 +1,6 @@
-package de.abat.shortener.infrastructure.rest;
+package de.abat.shortener.url.exceptions;
 
-import de.abat.shortener.infrastructure.exceptions.KeyNotExistsException;
-import de.abat.shortener.infrastructure.exceptions.KeyNotFoundInPoolException;
+import de.abat.shortener.url.boundary.UrlController;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
@@ -15,7 +14,7 @@ import java.util.Objects;
 
 @Slf4j
 @ResponseBody
-@ControllerAdvice
+@ControllerAdvice(basePackageClasses = UrlController.class)
 public class ApplicationExceptionHandler {
     public record ExceptionMessage(String message) {
     }

@@ -1,4 +1,4 @@
-package de.abat.shortener.infrastructure.config;
+package de.abat.shortener.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
